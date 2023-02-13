@@ -1,13 +1,13 @@
 """This project was created for calculated cash or callories."""
-
-from typing import Optional
 import datetime as dt
+from typing import Optional
 
 
 class Record:
     """This module provedes more conveniently create records."""
-    
-    def __init__(self, amount: int, comment: str, date: Optional[str]=None) -> None:
+
+    def __init__(self, amount: int, comment: str,
+                 date: Optional[str] = None) -> None:
         self.amount = amount
         self.comment = comment
         if date is None:
@@ -21,22 +21,23 @@ class Calculator:
     def __init__(self, limit: int) -> None:
         self.limit = limit
         self.records = []
-  
+
     def add_record(self, record):
         self.records.append(record)
-        print(self.records, 'It is records')
-    
+
     def get_today_stats(self):
-        for item in self.records:
-            if item.date == dt.datetime.now().date():
-                amount_sum += item.amount
-        
+        amount_sum = 0
+        for i in self.records:
+            if i.date == dt.datetime.now().date():
+                amount_sum += i.amount
+
         return amount_sum
 
     def get_week_stats(self):
-        for day in range (len(self.records)-1, len(self.records)-8):
-            summary_value += day.amount
-        
+        summary_value = 0
+        for i in range(len(self.records)-1, len(self.records)-8):
+            summary_value += i.amount
+
         return summary_value
 
 
@@ -46,35 +47,34 @@ class CaloriesCalculator(Calculator):
         super().__init__(limit)
 
     def get_calories_remained(self):
-        if self.get_today_stats()<self.limit:
-            return f'Сегодня можно съесть что-нибудь еще, но с общей калорийностью не более {self.limit - self.get_today_stats()} кКал'
-        
+        if self.get_today_stats() < self.limit:
+            return (f'Сегодня можно съесть что-нибудь еще, но с общей'
+                    f'калорийностью не более'
+                    f'{self.limit - self.get_today_stats()} кКал')
+
         return 'Хватит есть!'
 
 
-class CashCalculator:
+class CashCalculator(Calculator):
     """"""
     def __init__(self, limit) -> None:
         super().__init__(limit)
     
-    def get_today_cash_remainder(self, currency:str = 'rub'):
+    def get_today_cash_remained(self, currency: str):
         remaining_money = self.limit - self.get_today_stats()
-        usd=73
-        eur=78
-        if currency =='usd':
-            remaining_money = round((remaining_money / usd),2)
+        usd = 73
+        eur = 78
+        if currency == 'usd':
+            remaining_money = round((remaining_money / usd), 2)
         elif currency == 'eur':
-            remaining_money = round((remaining_money / eur),2)
+            remaining_money = round((remaining_money / eur), 2)
 
-        if self.get_today_stats()<self.limit:
+        if self.get_today_stats() < self.limit:
             return f'На сегодня осталось {remaining_money} {currency}'
         elif self.get_today_stats() == self.limit:
             return 'Денег нет, держись брат'
         else:
             return f'Денег нет, держись: Твой долг {remaining_money}{currency}'
-
-            
-
 
 
 # создадим калькулятор денег с дневным лимитом 1000
@@ -93,4 +93,4 @@ cash_calculator.add_record(Record(amount=3000,
 
 print(cash_calculator.get_today_cash_remained('rub'))
 # # должно напечататься
-# # На сегодня осталось 555 руб 
+# # На сегодня осталось 555 руб
